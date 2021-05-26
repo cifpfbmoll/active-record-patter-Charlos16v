@@ -1,26 +1,34 @@
 package edu.pingpong.active.record;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // Single bean instance
 @ApplicationScoped
 public class FruitActiveRecord {
 
-    public List<Fruit> getData() {
-        return Fruit.findAll().list();
+    public FruitActiveRecord() {}
+
+    public Set<Fruit> getData() {
+        Stream<Fruit> fruits = Fruit.streamAll();
+        return fruits.collect(Collectors.toSet());
     }
 
     public Optional<Fruit> getFruit(String name) {
-        return Fruit.find("name", name).firstResultOptional();
+        return name.isBlank()?
+                Optional.ofNullable(null) :
+                Fruit.find("name", name).firstResultOptional();
     }
 
     public void addFruit(Fruit fruit) {
-        fruit.persist();
+        fruit.persistAndFlush();
     }
 
     public void removeFruit(String name) {
-        Fruit.delete("name", name);
+        Fruit fruit = Fruit.find("name", name).firstResult();
+        fruit.delete();
     }
 }
