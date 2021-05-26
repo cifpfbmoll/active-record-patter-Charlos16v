@@ -1,17 +1,15 @@
 package edu.pingpong.active.record;
 
-import edu.pingpong.active.record.domain.Fruit;
-import edu.pingpong.active.record.repository.FruitRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,15 +19,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @QuarkusTest
+@Transactional
 public class FruitResourceTest {
-
-    @Inject
-    FruitRepository repository;
-
-    @BeforeEach
-    public void initDB() {
-        repository.initDB();
-    }
 
     @Test
     public void fruitsDataEndpoint() {
@@ -42,11 +33,13 @@ public class FruitResourceTest {
 
         Assertions.assertThat(fruits).hasSize(2);
 
-        Assertions.assertThat(fruits.get(0)).containsValue("Strawberry");
-        Assertions.assertThat(fruits.get(0)).containsEntry("description", "Winter fruit");
+        Collections.sort(fruits, Comparator.comparing(map -> (String)map.get("name")));
 
-        Assertions.assertThat(fruits.get(1)).containsValue("Orange");
-        Assertions.assertThat(fruits.get(1)).containsEntry("description", "Summer fruit");
+        Assertions.assertThat(fruits.get(0)).containsValue("Orange");
+        Assertions.assertThat(fruits.get(0)).containsEntry("description", "Summer fruit");
+
+        Assertions.assertThat(fruits.get(1)).containsValue("Strawberry");
+        Assertions.assertThat(fruits.get(1)).containsEntry("description", "Winter fruit");
     }
 
     @Test
@@ -61,41 +54,26 @@ public class FruitResourceTest {
                         "name", containsInAnyOrder("Strawberry", "Orange"),
                         "description", containsInAnyOrder("Winter fruit", "Summer fruit"));
     }
-
     @Test
-    public void addFruitTest() {
-        Fruit fruit = new Fruit("test", "test");
+    public void addDeleteFruitTest() {
         given()
-                .body(fruit)
+                .body("{\"name\": \"Kiwi\", \"description\": \"nice\"}")
                 .header("Content-Type", MediaType.APPLICATION_JSON)
                 .when()
                 .post("/fruits")
                 .then()
                 .statusCode(202)
-                .body("name", equalTo("test"));
-    }
+                .body("name", equalTo("Kiwi"));
 
-    @Test
-    public void deleteFruitTest() {
-        Fruit fruit = new Fruit("Orange", "Summer fruit");
         given()
-                .body(fruit)
+                .body("{\"name\": \"Kiwi\", \"description\": \"nice\"}")
                 .header("Content-Type", MediaType.APPLICATION_JSON)
                 .when()
                 .delete("/fruits")
                 .then()
                 .statusCode(202)
-                .body("name", equalTo("Orange"));
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/fruits")
-                .then()
-                .statusCode(200)
-                .body("$.size()", is(1),
-                        "name", Matchers.contains("Strawberry"),
-                        "description", Matchers.contains("Winter fruit"));
-    }
+                .body("name", equalTo("Kiwi"));}
+
 
     @Test
     public void getFruitTest() {
