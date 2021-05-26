@@ -1,9 +1,9 @@
 package edu.pingpong.active.record;
 
+import edu.pingpong.active.record.PostgresqlTestResource.Initializer;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import org.testcontainers.containers.PostgreSQLContainer;
-import edu.pingpong.active.record.PostgresqlTestResource.Initializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,6 @@ public class PostgresqlTestResource {
             if (this.postgreSQLContainer != null) {
                 this.postgreSQLContainer.close();
             }
+        }
     }
-}
 }

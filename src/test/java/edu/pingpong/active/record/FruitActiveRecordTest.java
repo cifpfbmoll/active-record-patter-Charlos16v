@@ -40,7 +40,7 @@ public class FruitActiveRecordTest {
         Assertions.assertThat(activeRecord.getData()).hasSize(3);
         Assertions.assertThat(activeRecord.getData().stream().anyMatch(fruit -> fruit.getName().equalsIgnoreCase("kiwi"))).isTrue();
 
-        Fruit fruit = Fruit.find("name","Kiwi").firstResult();
+        Fruit fruit = Fruit.find("name", "Kiwi").firstResult();
         fruit.delete();
     }
 

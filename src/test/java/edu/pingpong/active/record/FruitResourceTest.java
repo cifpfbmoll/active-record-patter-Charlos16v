@@ -33,7 +33,7 @@ public class FruitResourceTest {
 
         Assertions.assertThat(fruits).hasSize(2);
 
-        Collections.sort(fruits, Comparator.comparing(map -> (String)map.get("name")));
+        Collections.sort(fruits, Comparator.comparing(map -> (String) map.get("name")));
 
         Assertions.assertThat(fruits.get(0)).containsValue("Orange");
         Assertions.assertThat(fruits.get(0)).containsEntry("description", "Summer fruit");
@@ -54,6 +54,7 @@ public class FruitResourceTest {
                         "name", containsInAnyOrder("Strawberry", "Orange"),
                         "description", containsInAnyOrder("Winter fruit", "Summer fruit"));
     }
+
     @Test
     public void addDeleteFruitTest() {
         given()
@@ -72,7 +73,8 @@ public class FruitResourceTest {
                 .delete("/fruits")
                 .then()
                 .statusCode(202)
-                .body("name", equalTo("Kiwi"));}
+                .body("name", equalTo("Kiwi"));
+    }
 
 
     @Test

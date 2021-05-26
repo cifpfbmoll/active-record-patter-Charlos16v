@@ -10,7 +10,8 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class FruitActiveRecord {
 
-    public FruitActiveRecord() {}
+    public FruitActiveRecord() {
+    }
 
     public Set<Fruit> getData() {
         Stream<Fruit> fruits = Fruit.streamAll();
@@ -18,7 +19,7 @@ public class FruitActiveRecord {
     }
 
     public Optional<Fruit> getFruit(String name) {
-        return name.isBlank()?
+        return name.isBlank() ?
                 Optional.ofNullable(null) :
                 Fruit.find("name", name).firstResultOptional();
     }
